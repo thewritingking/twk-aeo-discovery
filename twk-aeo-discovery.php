@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:       TWK AEO Discovery
- * Plugin URI:        https://thewritingking.com/
+ * Plugin URI:        https://github.com/thewritingking/twk-aeo-discovery
  * Description:       Entity-authority schema enrichment so AI answer engines cite you. Plus XML sitemap, IndexNow notifications, and llms.txt.
  * Version:           1.7.0
  * Requires at least: 5.6
@@ -9,7 +9,6 @@
  * Author:            Richard Lowe
  * Author URI:        https://thewritingking.com/
  * Text Domain:       twk-aeo-discovery
- * Domain Path:       /lang
  * License:           GPLv2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  *
@@ -175,7 +174,7 @@ require_once TWKD_DIR . 'includes/class-twkd-report.php';
  * Boot the plugin.
  */
 function twkd_boot() {
-	load_plugin_textdomain( 'twk-aeo-discovery', false, dirname( plugin_basename( TWKD_FILE ) ) . '/lang' );
+	// Translations are loaded automatically by WordPress 4.6+ for plugins hosted on WordPress.org.
 	TWKD_Sitemap::instance()->hooks();
 	TWKD_IndexNow::instance()->hooks();
 	TWKD_Entity::instance()->hooks();

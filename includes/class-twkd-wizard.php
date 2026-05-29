@@ -293,8 +293,13 @@ class TWKD_Wizard {
 		if ( ! is_array( $settings ) ) {
 			$settings = array();
 		}
+		// Nonce is verified by the calling handle_save() via check_admin_referer( 'twkd_wizard_save' )
+		// before this method runs. Each field value is sanitized per-type by sanitize_value() in
+		// save_step_fields(), and identifier values are esc_url_raw'd in save_identifiers().
+		// phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 		$raw   = isset( $_POST[ TWKD_OPTION ] ) && is_array( $_POST[ TWKD_OPTION ] ) ? wp_unslash( $_POST[ TWKD_OPTION ] ) : array();
-		$clear = isset( $_POST['twkd_clear'] ) && is_array( $_POST['twkd_clear'] ) ? array_map( 'sanitize_key', array_keys( $_POST['twkd_clear'] ) ) : array();
+		$clear = isset( $_POST['twkd_clear'] ) && is_array( $_POST['twkd_clear'] ) ? array_map( 'sanitize_key', array_keys( wp_unslash( $_POST['twkd_clear'] ) ) ) : array();
+		// phpcs:enable
 
 		// Identifier steps compile individual fields into a sameAs textarea and
 		// record "don't have" flags separately.

@@ -4,6 +4,23 @@ All notable changes to TWK AEO Discovery are documented in this file. Format fol
 
 ## [Unreleased]
 
+### Standards (submission-prep fixes after v1.7.0 was first packaged)
+
+- **Plugin Check clean**: addressed all 54 findings the WordPress.org `Plugin Check` tool surfaced across the General, Plugin Repo, Security, Performance, and Accessibility categories. Codebase now returns zero findings.
+- Refactored `TWKD_Admin::tip()` to echo HTML directly instead of returning it, so call sites no longer trip `WordPress.Security.EscapeOutput.OutputNotEscaped` (33 call sites cleaned up). The escaped-attribute logic is unchanged; output is identical.
+- Moved `esc_url()` from inside the `$tab_url` closure to the six call sites that echo it, so PHPCS can see the escape at the output boundary.
+- Annotated `TWKD_Wizard::save_step()` `$_POST` reads with a `phpcs:disable`/`enable` block documenting that nonce verification happens in the calling `handle_save()` and that field values are sanitized per-type downstream by `sanitize_value()` and `save_identifiers()`.
+- Added `phpcs:ignore` annotations on the two `$_FILES['twkd_import_file']['tmp_name']` reads in `TWKD_Admin::import_settings()`, since that value is a server-generated temp filename rather than user-controlled input.
+- Added `wp_unslash()` to the `$_POST['twkd_clear']` keys before sanitization in `TWKD_Wizard::save_step()`.
+- Renamed the local variables `$sites` and `$site_id` in `uninstall.php` to `$twkd_sites` and `$twkd_site_id` to satisfy the `NonPrefixedVariableFound` check.
+- Removed the `Domain Path: /lang` plugin header — no `/lang` folder ships with the plugin, and translations are loaded automatically by WordPress 4.6+ for WP.org-hosted plugins.
+- Removed the `load_plugin_textdomain()` call for the same reason (WordPress 4.6+ auto-loads translations from the WP.org translate platform, no manual call needed).
+
+### Submission
+
+- Changed `Plugin URI:` header from `https://thewritingking.com/` to `https://github.com/thewritingking/twk-aeo-discovery` so it differs from `Author URI:`, satisfying WordPress.org's submission-time validator.
+- Submitted to WordPress.org plugin directory under slug `twk-aeo-discovery`. Awaiting human review.
+
 ## [1.7.0] — 2026-05-28
 
 First public release of TWK AEO Discovery — the WordPress.org-distribution version of the private TWK Discovery plugin, with multi-SEO support and a guided setup flow added.

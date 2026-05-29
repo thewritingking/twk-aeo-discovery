@@ -22,9 +22,9 @@ delete_transient( 'twkd_llms_file_result' );
 
 // Multisite: clean each site.
 if ( is_multisite() ) {
-	$sites = get_sites( array( 'fields' => 'ids' ) );
-	foreach ( $sites as $site_id ) {
-		switch_to_blog( $site_id );
+	$twkd_sites = get_sites( array( 'fields' => 'ids' ) );
+	foreach ( $twkd_sites as $twkd_site_id ) {
+		switch_to_blog( $twkd_site_id );
 		delete_option( 'twkd_settings' );
 		delete_option( 'twkd_indexnow_key' );
 		delete_option( 'twkd_indexnow_last' );

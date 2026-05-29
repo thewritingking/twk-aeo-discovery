@@ -273,7 +273,10 @@ class TWKD_Admin {
 	 * @return string Safe HTML to echo inline next to a label.
 	 */
 	private function tip( $text ) {
-		return ' <span class="twkd-tip dashicons dashicons-editor-help" data-twkd-tip="' . esc_attr( $text ) . '" tabindex="0" role="img" aria-label="' . esc_attr( $text ) . '"></span>';
+		// Echoing directly (not returning) means call sites use `<?php $this->tip(...)`
+		// without `echo`, which both satisfies PHPCS OutputNotEscaped and keeps the
+		// rendering logic in one place. The dynamic value is esc_attr'd inline below.
+		echo ' <span class="twkd-tip dashicons dashicons-editor-help" data-twkd-tip="' . esc_attr( $text ) . '" tabindex="0" role="img" aria-label="' . esc_attr( $text ) . '"></span>';
 	}
 
 	/**
@@ -402,7 +405,7 @@ class TWKD_Admin {
 		}
 
 		$tab_url = function ( $tab ) {
-			return esc_url( admin_url( 'options-general.php?page=twk-aeo-discovery&tab=' . $tab ) );
+			return admin_url( 'options-general.php?page=twk-aeo-discovery&tab=' . $tab );
 		};
 		?>
 		<div class="wrap">
@@ -418,12 +421,12 @@ class TWKD_Admin {
 			</p>
 
 			<h2 class="nav-tab-wrapper">
-				<a href="<?php echo $tab_url( 'sitemap' ); ?>" class="nav-tab <?php echo 'sitemap' === $active_tab ? 'nav-tab-active' : ''; ?>"><?php esc_html_e( 'Sitemap', 'twk-aeo-discovery' ); ?></a>
-				<a href="<?php echo $tab_url( 'indexnow' ); ?>" class="nav-tab <?php echo 'indexnow' === $active_tab ? 'nav-tab-active' : ''; ?>"><?php esc_html_e( 'IndexNow', 'twk-aeo-discovery' ); ?></a>
-				<a href="<?php echo $tab_url( 'entity' ); ?>" class="nav-tab <?php echo 'entity' === $active_tab ? 'nav-tab-active' : ''; ?>"><?php esc_html_e( 'Entity Authority', 'twk-aeo-discovery' ); ?></a>
-				<a href="<?php echo $tab_url( 'ai' ); ?>" class="nav-tab <?php echo 'ai' === $active_tab ? 'nav-tab-active' : ''; ?>"><?php esc_html_e( 'AI Engines', 'twk-aeo-discovery' ); ?></a>
-				<a href="<?php echo $tab_url( 'tools' ); ?>" class="nav-tab <?php echo 'tools' === $active_tab ? 'nav-tab-active' : ''; ?>"><?php esc_html_e( 'Tools', 'twk-aeo-discovery' ); ?></a>
-				<a href="<?php echo $tab_url( 'diagnostics' ); ?>" class="nav-tab <?php echo 'diagnostics' === $active_tab ? 'nav-tab-active' : ''; ?>"><?php esc_html_e( 'Diagnostics', 'twk-aeo-discovery' ); ?></a>
+				<a href="<?php echo esc_url( $tab_url( 'sitemap' ) ); ?>" class="nav-tab <?php echo 'sitemap' === $active_tab ? 'nav-tab-active' : ''; ?>"><?php esc_html_e( 'Sitemap', 'twk-aeo-discovery' ); ?></a>
+				<a href="<?php echo esc_url( $tab_url( 'indexnow' ) ); ?>" class="nav-tab <?php echo 'indexnow' === $active_tab ? 'nav-tab-active' : ''; ?>"><?php esc_html_e( 'IndexNow', 'twk-aeo-discovery' ); ?></a>
+				<a href="<?php echo esc_url( $tab_url( 'entity' ) ); ?>" class="nav-tab <?php echo 'entity' === $active_tab ? 'nav-tab-active' : ''; ?>"><?php esc_html_e( 'Entity Authority', 'twk-aeo-discovery' ); ?></a>
+				<a href="<?php echo esc_url( $tab_url( 'ai' ) ); ?>" class="nav-tab <?php echo 'ai' === $active_tab ? 'nav-tab-active' : ''; ?>"><?php esc_html_e( 'AI Engines', 'twk-aeo-discovery' ); ?></a>
+				<a href="<?php echo esc_url( $tab_url( 'tools' ) ); ?>" class="nav-tab <?php echo 'tools' === $active_tab ? 'nav-tab-active' : ''; ?>"><?php esc_html_e( 'Tools', 'twk-aeo-discovery' ); ?></a>
+				<a href="<?php echo esc_url( $tab_url( 'diagnostics' ) ); ?>" class="nav-tab <?php echo 'diagnostics' === $active_tab ? 'nav-tab-active' : ''; ?>"><?php esc_html_e( 'Diagnostics', 'twk-aeo-discovery' ); ?></a>
 			</h2>
 
 			<?php if ( in_array( $active_tab, array( 'sitemap', 'indexnow', 'entity', 'ai' ), true ) ) : ?>
@@ -436,11 +439,11 @@ class TWKD_Admin {
 					<p class="description"><?php esc_html_e( 'A dynamic XML sitemap index at /sitemap.xml, with per-object sub-sitemaps paginated. Submit /sitemap.xml once in Google Search Console; ongoing change notifications happen via IndexNow.', 'twk-aeo-discovery' ); ?></p>
 					<table class="form-table" role="presentation">
 						<tr>
-							<th scope="row"><?php esc_html_e( 'Enable sitemap', 'twk-aeo-discovery' ); ?><?php echo $this->tip( __( 'Turn dynamic XML sitemap generation on or off. When off, /sitemap.xml returns nothing.', 'twk-aeo-discovery' ) ); ?></th>
+							<th scope="row"><?php esc_html_e( 'Enable sitemap', 'twk-aeo-discovery' ); ?><?php $this->tip( __( 'Turn dynamic XML sitemap generation on or off. When off, /sitemap.xml returns nothing.', 'twk-aeo-discovery' ) ); ?></th>
 							<td><label><input type="checkbox" name="<?php echo esc_attr( TWKD_OPTION ); ?>[enable_sitemap]" value="1" <?php checked( twkd_get_option( 'enable_sitemap' ) ); ?> /> <?php esc_html_e( 'Generate a dynamic XML sitemap', 'twk-aeo-discovery' ); ?></label></td>
 						</tr>
 						<tr>
-							<th scope="row"><?php esc_html_e( 'Included post types', 'twk-aeo-discovery' ); ?><?php echo $this->tip( __( 'Tick every post type that should appear in the sitemap. Custom post types (e.g. books, podcasts, case-studies) typically should be included. Attachments are never included.', 'twk-aeo-discovery' ) ); ?></th>
+							<th scope="row"><?php esc_html_e( 'Included post types', 'twk-aeo-discovery' ); ?><?php $this->tip( __( 'Tick every post type that should appear in the sitemap. Custom post types (e.g. books, podcasts, case-studies) typically should be included. Attachments are never included.', 'twk-aeo-discovery' ) ); ?></th>
 							<td>
 								<?php foreach ( $public_pt as $pt ) : ?>
 									<label style="display:inline-block;margin-right:1em;">
@@ -451,7 +454,7 @@ class TWKD_Admin {
 							</td>
 						</tr>
 						<tr>
-							<th scope="row"><?php esc_html_e( 'Included taxonomies', 'twk-aeo-discovery' ); ?><?php echo $this->tip( __( 'Tick every public taxonomy whose term archives should appear in the sitemap (categories, tags, custom taxonomy term pages).', 'twk-aeo-discovery' ) ); ?></th>
+							<th scope="row"><?php esc_html_e( 'Included taxonomies', 'twk-aeo-discovery' ); ?><?php $this->tip( __( 'Tick every public taxonomy whose term archives should appear in the sitemap (categories, tags, custom taxonomy term pages).', 'twk-aeo-discovery' ) ); ?></th>
 							<td>
 								<?php foreach ( $public_tax as $tax ) : ?>
 									<label style="display:inline-block;margin-right:1em;">
@@ -462,11 +465,11 @@ class TWKD_Admin {
 							</td>
 						</tr>
 						<tr>
-							<th scope="row"><?php esc_html_e( 'URLs per sitemap file', 'twk-aeo-discovery' ); ?><?php echo $this->tip( __( 'How many URLs each sub-sitemap holds before pagination kicks in. Default 2000 is fine for most sites. Example: a site with 8,000 posts at 2,000 per file produces 4 sub-sitemaps (page 1 through 4).', 'twk-aeo-discovery' ) ); ?></th>
+							<th scope="row"><?php esc_html_e( 'URLs per sitemap file', 'twk-aeo-discovery' ); ?><?php $this->tip( __( 'How many URLs each sub-sitemap holds before pagination kicks in. Default 2000 is fine for most sites. Example: a site with 8,000 posts at 2,000 per file produces 4 sub-sitemaps (page 1 through 4).', 'twk-aeo-discovery' ) ); ?></th>
 							<td><input type="number" min="1" max="50000" name="<?php echo esc_attr( TWKD_OPTION ); ?>[per_page]" value="<?php echo esc_attr( twkd_get_option( 'per_page' ) ); ?>" class="small-text" /> <span class="description"><?php esc_html_e( 'Protocol maximum is 50,000.', 'twk-aeo-discovery' ); ?></span></td>
 						</tr>
 						<tr>
-							<th scope="row"><?php esc_html_e( 'robots.txt', 'twk-aeo-discovery' ); ?><?php echo $this->tip( __( 'Three independent toggles for how the sitemap interacts with robots.txt and the built-in WordPress sitemap. Recommended: leave all three on.', 'twk-aeo-discovery' ) ); ?></th>
+							<th scope="row"><?php esc_html_e( 'robots.txt', 'twk-aeo-discovery' ); ?><?php $this->tip( __( 'Three independent toggles for how the sitemap interacts with robots.txt and the built-in WordPress sitemap. Recommended: leave all three on.', 'twk-aeo-discovery' ) ); ?></th>
 							<td>
 								<label><input type="checkbox" name="<?php echo esc_attr( TWKD_OPTION ); ?>[robots_sitemap]" value="1" <?php checked( twkd_get_option( 'robots_sitemap' ) ); ?> /> <?php esc_html_e( 'Add the sitemap line to the virtual robots.txt', 'twk-aeo-discovery' ); ?></label><br />
 								<label><input type="checkbox" name="<?php echo esc_attr( TWKD_OPTION ); ?>[disable_core_sitemap]" value="1" <?php checked( twkd_get_option( 'disable_core_sitemap' ) ); ?> /> <?php esc_html_e( 'Disable the built-in WordPress sitemap (/wp-sitemap.xml) to avoid duplicates', 'twk-aeo-discovery' ); ?></label><br />
@@ -481,11 +484,11 @@ class TWKD_Admin {
 					<p class="description"><?php esc_html_e( 'Google retired anonymous sitemap pings in 2023; submit your sitemap once in Google Search Console. IndexNow covers ongoing change notifications for Microsoft Bing, Yandex, Seznam.cz, Naver and other participating engines.', 'twk-aeo-discovery' ); ?></p>
 					<table class="form-table" role="presentation">
 						<tr>
-							<th scope="row"><?php esc_html_e( 'IndexNow', 'twk-aeo-discovery' ); ?><?php echo $this->tip( __( 'When enabled, every publish and update fires an asynchronous notification to participating engines. Safe to leave on. Google does not participate but this does not hurt.', 'twk-aeo-discovery' ) ); ?></th>
+							<th scope="row"><?php esc_html_e( 'IndexNow', 'twk-aeo-discovery' ); ?><?php $this->tip( __( 'When enabled, every publish and update fires an asynchronous notification to participating engines. Safe to leave on. Google does not participate but this does not hurt.', 'twk-aeo-discovery' ) ); ?></th>
 							<td><label><input type="checkbox" name="<?php echo esc_attr( TWKD_OPTION ); ?>[enable_indexnow]" value="1" <?php checked( twkd_get_option( 'enable_indexnow' ) ); ?> /> <?php esc_html_e( 'Notify engines automatically when content is published or updated', 'twk-aeo-discovery' ); ?></label></td>
 						</tr>
 						<tr>
-							<th scope="row"><?php esc_html_e( 'API key', 'twk-aeo-discovery' ); ?><?php echo $this->tip( __( 'Auto-generated on activation. Each site needs its own key. Engines validate ownership by fetching {key}.txt at your site root and confirming it returns the same key.', 'twk-aeo-discovery' ) ); ?></th>
+							<th scope="row"><?php esc_html_e( 'API key', 'twk-aeo-discovery' ); ?><?php $this->tip( __( 'Auto-generated on activation. Each site needs its own key. Engines validate ownership by fetching {key}.txt at your site root and confirming it returns the same key.', 'twk-aeo-discovery' ) ); ?></th>
 							<td>
 								<code><?php echo esc_html( $key ); ?></code><br />
 								<span class="description"><?php esc_html_e( 'Key file:', 'twk-aeo-discovery' ); ?> <a href="<?php echo esc_url( home_url( '/' . $key . '.txt' ) ); ?>" target="_blank"><?php echo esc_html( home_url( '/' . $key . '.txt' ) ); ?></a></span>
@@ -524,7 +527,7 @@ class TWKD_Admin {
 					</p>
 					<table class="form-table" role="presentation">
 						<tr>
-							<th scope="row"><?php esc_html_e( 'Enrichment', 'twk-aeo-discovery' ); ?><?php echo $this->tip( __( 'Master switch. When on, the values below get merged into your SEO plugin\'s Organization and Person schema sitewide (or emitted as a standalone graph if no SEO plugin is active). The suppress-front option is for sites with a hand-built homepage graph that should stand alone.', 'twk-aeo-discovery' ) ); ?></th>
+							<th scope="row"><?php esc_html_e( 'Enrichment', 'twk-aeo-discovery' ); ?><?php $this->tip( __( 'Master switch. When on, the values below get merged into your SEO plugin\'s Organization and Person schema sitewide (or emitted as a standalone graph if no SEO plugin is active). The suppress-front option is for sites with a hand-built homepage graph that should stand alone.', 'twk-aeo-discovery' ) ); ?></th>
 							<td>
 								<label><input type="checkbox" name="<?php echo esc_attr( TWKD_OPTION ); ?>[enable_entity]" value="1" <?php checked( twkd_get_option( 'enable_entity' ) ); ?> /> <?php esc_html_e( 'Inject the values below into your SEO plugin\'s Organization and Person schema', 'twk-aeo-discovery' ); ?></label><br />
 								<label><input type="checkbox" name="<?php echo esc_attr( TWKD_OPTION ); ?>[entity_suppress_front]" value="1" <?php checked( twkd_get_option( 'entity_suppress_front' ) ); ?> /> <?php esc_html_e( 'Suppress enrichment on the front page (use your hand-built homepage graph instead)', 'twk-aeo-discovery' ); ?></label>
@@ -532,115 +535,115 @@ class TWKD_Admin {
 						</tr>
 						</tr>
 						<tr>
-							<th scope="row"><label for="twkd_org_id"><?php esc_html_e( 'Organization canonical @id', 'twk-aeo-discovery' ); ?></label><?php echo $this->tip( __( 'Optional. The URL fragment id Slim SEO\'s Organization should use sitewide. Example: https://example.com/#business — when set, every Organization reference across the site is unified to this id. Leave blank to keep Slim SEO\'s default and reconcile by sameAs only.', 'twk-aeo-discovery' ) ); ?></th>
+							<th scope="row"><label for="twkd_org_id"><?php esc_html_e( 'Organization canonical @id', 'twk-aeo-discovery' ); ?></label><?php $this->tip( __( 'Optional. The URL fragment id Slim SEO\'s Organization should use sitewide. Example: https://example.com/#business — when set, every Organization reference across the site is unified to this id. Leave blank to keep Slim SEO\'s default and reconcile by sameAs only.', 'twk-aeo-discovery' ) ); ?></th>
 							<td>
 								<input type="url" id="twkd_org_id" class="regular-text" name="<?php echo esc_attr( TWKD_OPTION ); ?>[org_id]" value="<?php echo esc_attr( twkd_get_option( 'org_id' ) ); ?>" placeholder="https://example.com/#business" />
 								<p class="description"><?php esc_html_e( 'Optional. If set, Slim SEO\'s Organization @id is rewritten to this and all references repointed — so the whole site uses one Organization id, matching your homepage graph. Leave blank to keep Slim SEO\'s id and reconcile by sameAs only.', 'twk-aeo-discovery' ); ?></p>
 							</td>
 						</tr>
 						<tr>
-							<th scope="row"><label for="twkd_org_logo"><?php esc_html_e( 'Organization logo URL', 'twk-aeo-discovery' ); ?></label><?php echo $this->tip( __( 'A direct URL to a square logo image (PNG or JPG, ideally 600x600 or larger). Example: https://example.com/wp-content/uploads/logo.png. Required for Knowledge Graph eligibility.', 'twk-aeo-discovery' ) ); ?></th>
+							<th scope="row"><label for="twkd_org_logo"><?php esc_html_e( 'Organization logo URL', 'twk-aeo-discovery' ); ?></label><?php $this->tip( __( 'A direct URL to a square logo image (PNG or JPG, ideally 600x600 or larger). Example: https://example.com/wp-content/uploads/logo.png. Required for Knowledge Graph eligibility.', 'twk-aeo-discovery' ) ); ?></th>
 							<td><input type="url" id="twkd_org_logo" class="regular-text" name="<?php echo esc_attr( TWKD_OPTION ); ?>[org_logo]" value="<?php echo esc_attr( twkd_get_option( 'org_logo' ) ); ?>" placeholder="https://" /></td>
 						</tr>
 						<tr>
-							<th scope="row"><label for="twkd_org_sameas"><?php esc_html_e( 'Organization sameAs', 'twk-aeo-discovery' ); ?></label><?php echo $this->tip( __( 'Authority links for the organization, one URL per line. Examples: https://www.linkedin.com/company/example, https://twitter.com/example, https://www.crunchbase.com/organization/example. These corroborate the organization\'s identity across the web.', 'twk-aeo-discovery' ) ); ?></th>
+							<th scope="row"><label for="twkd_org_sameas"><?php esc_html_e( 'Organization sameAs', 'twk-aeo-discovery' ); ?></label><?php $this->tip( __( 'Authority links for the organization, one URL per line. Examples: https://www.linkedin.com/company/example, https://twitter.com/example, https://www.crunchbase.com/organization/example. These corroborate the organization\'s identity across the web.', 'twk-aeo-discovery' ) ); ?></th>
 							<td>
 								<textarea id="twkd_org_sameas" class="large-text code" rows="5" name="<?php echo esc_attr( TWKD_OPTION ); ?>[org_sameas]"><?php echo esc_textarea( twkd_get_option( 'org_sameas' ) ); ?></textarea>
 								<p class="description"><?php esc_html_e( 'One URL per line — your other sites and brand profiles (LinkedIn, X, BookBub, directory listings).', 'twk-aeo-discovery' ); ?></p>
 							</td>
 						</tr>
 						<tr>
-							<th scope="row"><label for="twkd_org_knows"><?php esc_html_e( 'Organization knowsAbout', 'twk-aeo-discovery' ); ?></label><?php echo $this->tip( __( 'Topics the organization is known for, one per line or comma-separated. Examples: web design, search engine optimization, content marketing. Helps AI engines understand the organization\'s domain of expertise.', 'twk-aeo-discovery' ) ); ?></th>
+							<th scope="row"><label for="twkd_org_knows"><?php esc_html_e( 'Organization knowsAbout', 'twk-aeo-discovery' ); ?></label><?php $this->tip( __( 'Topics the organization is known for, one per line or comma-separated. Examples: web design, search engine optimization, content marketing. Helps AI engines understand the organization\'s domain of expertise.', 'twk-aeo-discovery' ) ); ?></th>
 							<td>
 								<textarea id="twkd_org_knows" class="large-text" rows="3" name="<?php echo esc_attr( TWKD_OPTION ); ?>[org_knowsabout]"><?php echo esc_textarea( twkd_get_option( 'org_knowsabout' ) ); ?></textarea>
 								<p class="description"><?php esc_html_e( 'Topics, one per line or comma-separated. Optional.', 'twk-aeo-discovery' ); ?></p>
 							</td>
 						</tr>
 						<tr>
-							<th scope="row"><label for="twkd_org_contacts"><?php esc_html_e( 'Contact points', 'twk-aeo-discovery' ); ?></label><?php echo $this->tip( __( 'Defined once, applied to the Organization on every page. One per line, format: contactType | url | description. Example: customer service | https://example.com/contact/ | Get in touch about support.', 'twk-aeo-discovery' ) ); ?></th>
+							<th scope="row"><label for="twkd_org_contacts"><?php esc_html_e( 'Contact points', 'twk-aeo-discovery' ); ?></label><?php $this->tip( __( 'Defined once, applied to the Organization on every page. One per line, format: contactType | url | description. Example: customer service | https://example.com/contact/ | Get in touch about support.', 'twk-aeo-discovery' ) ); ?></th>
 							<td>
 								<textarea id="twkd_org_contacts" class="large-text code" rows="4" name="<?php echo esc_attr( TWKD_OPTION ); ?>[org_contactpoints]"><?php echo esc_textarea( twkd_get_option( 'org_contactpoints' ) ); ?></textarea>
 								<p class="description"><?php esc_html_e( 'One per line: contactType | url | description. English / US is assumed. Defined once here, applied to the Organization on every page.', 'twk-aeo-discovery' ); ?></p>
 							</td>
 						</tr>
 						<tr>
-							<th scope="row"><label for="twkd_org_alt"><?php esc_html_e( 'Organization alternateName', 'twk-aeo-discovery' ); ?></label><?php echo $this->tip( __( 'Other names the organization is known by, one per line. Examples: trade names, abbreviations, former names. Useful for matching legacy mentions.', 'twk-aeo-discovery' ) ); ?></th>
+							<th scope="row"><label for="twkd_org_alt"><?php esc_html_e( 'Organization alternateName', 'twk-aeo-discovery' ); ?></label><?php $this->tip( __( 'Other names the organization is known by, one per line. Examples: trade names, abbreviations, former names. Useful for matching legacy mentions.', 'twk-aeo-discovery' ) ); ?></th>
 							<td>
 								<textarea id="twkd_org_alt" class="large-text" rows="3" name="<?php echo esc_attr( TWKD_OPTION ); ?>[org_altname]"><?php echo esc_textarea( twkd_get_option( 'org_altname' ) ); ?></textarea>
 								<p class="description"><?php esc_html_e( 'Other names the organization is known by, one per line. Optional.', 'twk-aeo-discovery' ); ?></p>
 							</td>
 						</tr>
 						<tr>
-							<th scope="row"><label for="twkd_org_desc"><?php esc_html_e( 'Organization description', 'twk-aeo-discovery' ); ?></label><?php echo $this->tip( __( 'One to three sentences describing what the organization does. Example: A studio that designs and builds custom WordPress sites for service businesses.', 'twk-aeo-discovery' ) ); ?></th>
+							<th scope="row"><label for="twkd_org_desc"><?php esc_html_e( 'Organization description', 'twk-aeo-discovery' ); ?></label><?php $this->tip( __( 'One to three sentences describing what the organization does. Example: A studio that designs and builds custom WordPress sites for service businesses.', 'twk-aeo-discovery' ) ); ?></th>
 							<td>
 								<textarea id="twkd_org_desc" class="large-text" rows="3" name="<?php echo esc_attr( TWKD_OPTION ); ?>[org_description]"><?php echo esc_textarea( twkd_get_option( 'org_description' ) ); ?></textarea>
 								<p class="description"><?php esc_html_e( 'Optional.', 'twk-aeo-discovery' ); ?></p>
 							</td>
 						</tr>
 						<tr>
-							<th scope="row"><label for="twkd_org_area"><?php esc_html_e( 'Organization areaServed', 'twk-aeo-discovery' ); ?></label><?php echo $this->tip( __( 'A country name, output as a Country in schema. Example: United States, United Kingdom, Canada.', 'twk-aeo-discovery' ) ); ?></th>
+							<th scope="row"><label for="twkd_org_area"><?php esc_html_e( 'Organization areaServed', 'twk-aeo-discovery' ); ?></label><?php $this->tip( __( 'A country name, output as a Country in schema. Example: United States, United Kingdom, Canada.', 'twk-aeo-discovery' ) ); ?></th>
 							<td>
 								<input type="text" id="twkd_org_area" class="regular-text" name="<?php echo esc_attr( TWKD_OPTION ); ?>[org_areaserved]" value="<?php echo esc_attr( twkd_get_option( 'org_areaserved' ) ); ?>" placeholder="United States" />
 								<p class="description"><?php esc_html_e( 'A country name, output as a Country. Optional.', 'twk-aeo-discovery' ); ?></p>
 							</td>
 						</tr>
 						<tr>
-							<th scope="row"><label for="twkd_author_name"><?php esc_html_e( 'Author display name', 'twk-aeo-discovery' ); ?></label><?php echo $this->tip( __( 'The display name that matches the post author. Example: Jane Smith. Only Person nodes with this name get enriched; leave blank to enrich every Person node Slim SEO emits.', 'twk-aeo-discovery' ) ); ?></th>
+							<th scope="row"><label for="twkd_author_name"><?php esc_html_e( 'Author display name', 'twk-aeo-discovery' ); ?></label><?php $this->tip( __( 'The display name that matches the post author. Example: Jane Smith. Only Person nodes with this name get enriched; leave blank to enrich every Person node Slim SEO emits.', 'twk-aeo-discovery' ) ); ?></th>
 							<td>
 								<input type="text" id="twkd_author_name" class="regular-text" name="<?php echo esc_attr( TWKD_OPTION ); ?>[author_name]" value="<?php echo esc_attr( twkd_get_option( 'author_name' ) ); ?>" />
 								<p class="description"><?php esc_html_e( 'Must match the author name Slim SEO outputs (the post author\'s display name). Only Person nodes with this name get enriched; leave blank to enrich every Person node.', 'twk-aeo-discovery' ); ?></p>
 							</td>
 						</tr>
 						<tr>
-							<th scope="row"><label for="twkd_author_id"><?php esc_html_e( 'Author canonical @id', 'twk-aeo-discovery' ); ?></label><?php echo $this->tip( __( 'Optional but recommended. Example: https://example.com/#author. When set, every Person reference is unified to this id so each post\'s author is literally the same node as your homepage Person.', 'twk-aeo-discovery' ) ); ?></th>
+							<th scope="row"><label for="twkd_author_id"><?php esc_html_e( 'Author canonical @id', 'twk-aeo-discovery' ); ?></label><?php $this->tip( __( 'Optional but recommended. Example: https://example.com/#author. When set, every Person reference is unified to this id so each post\'s author is literally the same node as your homepage Person.', 'twk-aeo-discovery' ) ); ?></th>
 							<td>
 								<input type="url" id="twkd_author_id" class="regular-text" name="<?php echo esc_attr( TWKD_OPTION ); ?>[author_id]" value="<?php echo esc_attr( twkd_get_option( 'author_id' ) ); ?>" placeholder="https://example.com/#richard" />
 								<p class="description"><?php esc_html_e( 'Optional but recommended. If set, Slim SEO\'s Person @id is rewritten to this and every author reference repointed — so each post\'s author is literally the same node as your homepage Person, not just reconciled by sameAs.', 'twk-aeo-discovery' ); ?></p>
 							</td>
 						</tr>
 						<tr>
-							<th scope="row"><label for="twkd_author_alt"><?php esc_html_e( 'Author alternateName', 'twk-aeo-discovery' ); ?></label><?php echo $this->tip( __( 'Other names you are known by, one per line. Useful for old records that used a different byline (e.g. maiden name, former pen name).', 'twk-aeo-discovery' ) ); ?></th>
+							<th scope="row"><label for="twkd_author_alt"><?php esc_html_e( 'Author alternateName', 'twk-aeo-discovery' ); ?></label><?php $this->tip( __( 'Other names you are known by, one per line. Useful for old records that used a different byline (e.g. maiden name, former pen name).', 'twk-aeo-discovery' ) ); ?></th>
 							<td>
 								<textarea id="twkd_author_alt" class="large-text" rows="3" name="<?php echo esc_attr( TWKD_OPTION ); ?>[author_altname]"><?php echo esc_textarea( twkd_get_option( 'author_altname' ) ); ?></textarea>
 								<p class="description"><?php esc_html_e( 'Other names you are known by (for old-record matching), one per line. Optional.', 'twk-aeo-discovery' ); ?></p>
 							</td>
 						</tr>
 						<tr>
-							<th scope="row"><label for="twkd_author_url"><?php esc_html_e( 'Author URL', 'twk-aeo-discovery' ); ?></label><?php echo $this->tip( __( 'The canonical URL that represents the author. Usually your homepage or an author archive. Example: https://example.com/.', 'twk-aeo-discovery' ) ); ?></th>
+							<th scope="row"><label for="twkd_author_url"><?php esc_html_e( 'Author URL', 'twk-aeo-discovery' ); ?></label><?php $this->tip( __( 'The canonical URL that represents the author. Usually your homepage or an author archive. Example: https://example.com/.', 'twk-aeo-discovery' ) ); ?></th>
 							<td><input type="url" id="twkd_author_url" class="regular-text" name="<?php echo esc_attr( TWKD_OPTION ); ?>[author_url]" value="<?php echo esc_attr( twkd_get_option( 'author_url' ) ); ?>" placeholder="https://" /></td>
 						</tr>
 						<tr>
-							<th scope="row"><label for="twkd_author_given"><?php esc_html_e( 'Author given name', 'twk-aeo-discovery' ); ?></label><?php echo $this->tip( __( 'First name. Example: Jane.', 'twk-aeo-discovery' ) ); ?></th>
+							<th scope="row"><label for="twkd_author_given"><?php esc_html_e( 'Author given name', 'twk-aeo-discovery' ); ?></label><?php $this->tip( __( 'First name. Example: Jane.', 'twk-aeo-discovery' ) ); ?></th>
 							<td><input type="text" id="twkd_author_given" class="regular-text" name="<?php echo esc_attr( TWKD_OPTION ); ?>[author_givenname]" value="<?php echo esc_attr( twkd_get_option( 'author_givenname' ) ); ?>" /></td>
 						</tr>
 						<tr>
-							<th scope="row"><label for="twkd_author_family"><?php esc_html_e( 'Author family name', 'twk-aeo-discovery' ); ?></label><?php echo $this->tip( __( 'Last name. Example: Smith.', 'twk-aeo-discovery' ) ); ?></th>
+							<th scope="row"><label for="twkd_author_family"><?php esc_html_e( 'Author family name', 'twk-aeo-discovery' ); ?></label><?php $this->tip( __( 'Last name. Example: Smith.', 'twk-aeo-discovery' ) ); ?></th>
 							<td><input type="text" id="twkd_author_family" class="regular-text" name="<?php echo esc_attr( TWKD_OPTION ); ?>[author_familyname]" value="<?php echo esc_attr( twkd_get_option( 'author_familyname' ) ); ?>" /></td>
 						</tr>
 						<tr>
-							<th scope="row"><label for="twkd_author_bio"><?php esc_html_e( 'Author bio', 'twk-aeo-discovery' ); ?></label><?php echo $this->tip( __( 'A short biographical paragraph. Example: Jane Smith is a web designer with twenty years of experience building sites for service businesses. Overrides whatever Slim SEO pulled from the WordPress user profile.', 'twk-aeo-discovery' ) ); ?></th>
+							<th scope="row"><label for="twkd_author_bio"><?php esc_html_e( 'Author bio', 'twk-aeo-discovery' ); ?></label><?php $this->tip( __( 'A short biographical paragraph. Example: Jane Smith is a web designer with twenty years of experience building sites for service businesses. Overrides whatever Slim SEO pulled from the WordPress user profile.', 'twk-aeo-discovery' ) ); ?></th>
 							<td>
 								<textarea id="twkd_author_bio" class="large-text" rows="4" name="<?php echo esc_attr( TWKD_OPTION ); ?>[author_bio]"><?php echo esc_textarea( twkd_get_option( 'author_bio' ) ); ?></textarea>
 								<p class="description"><?php esc_html_e( 'Overrides the description Slim SEO pulls from the user profile. (Updating the profile Biographical Info fixes it at the source too.)', 'twk-aeo-discovery' ); ?></p>
 							</td>
 						</tr>
 						<tr>
-							<th scope="row"><label for="twkd_author_job"><?php esc_html_e( 'Author job title', 'twk-aeo-discovery' ); ?></label><?php echo $this->tip( __( 'Professional title. Examples: Founder, Senior Editor, Web Developer.', 'twk-aeo-discovery' ) ); ?></th>
+							<th scope="row"><label for="twkd_author_job"><?php esc_html_e( 'Author job title', 'twk-aeo-discovery' ); ?></label><?php $this->tip( __( 'Professional title. Examples: Founder, Senior Editor, Web Developer.', 'twk-aeo-discovery' ) ); ?></th>
 							<td><input type="text" id="twkd_author_job" class="regular-text" name="<?php echo esc_attr( TWKD_OPTION ); ?>[author_jobtitle]" value="<?php echo esc_attr( twkd_get_option( 'author_jobtitle' ) ); ?>" /></td>
 						</tr>
 						<tr>
-							<th scope="row"><label for="twkd_author_image"><?php esc_html_e( 'Author image URL', 'twk-aeo-discovery' ); ?></label><?php echo $this->tip( __( 'A direct URL to a portrait image (square works best). Example: https://example.com/wp-content/uploads/jane.jpg.', 'twk-aeo-discovery' ) ); ?></th>
+							<th scope="row"><label for="twkd_author_image"><?php esc_html_e( 'Author image URL', 'twk-aeo-discovery' ); ?></label><?php $this->tip( __( 'A direct URL to a portrait image (square works best). Example: https://example.com/wp-content/uploads/jane.jpg.', 'twk-aeo-discovery' ) ); ?></th>
 							<td><input type="url" id="twkd_author_image" class="regular-text" name="<?php echo esc_attr( TWKD_OPTION ); ?>[author_image]" value="<?php echo esc_attr( twkd_get_option( 'author_image' ) ); ?>" placeholder="https://" /></td>
 						</tr>
 						<tr>
-							<th scope="row"><label for="twkd_author_sameas"><?php esc_html_e( 'Author sameAs', 'twk-aeo-discovery' ); ?></label><?php echo $this->tip( __( 'Authority links for the author, one URL per line. Strongest first: ORCID (https://orcid.org/0000-0000-0000-0000), Wikidata (https://www.wikidata.org/wiki/Q12345), ISNI (https://isni.org/isni/0000000000000000), Open Library (https://openlibrary.org/authors/OL123A), plus LinkedIn, Twitter, etc.', 'twk-aeo-discovery' ) ); ?></th>
+							<th scope="row"><label for="twkd_author_sameas"><?php esc_html_e( 'Author sameAs', 'twk-aeo-discovery' ); ?></label><?php $this->tip( __( 'Authority links for the author, one URL per line. Strongest first: ORCID (https://orcid.org/0000-0000-0000-0000), Wikidata (https://www.wikidata.org/wiki/Q12345), ISNI (https://isni.org/isni/0000000000000000), Open Library (https://openlibrary.org/authors/OL123A), plus LinkedIn, Twitter, etc.', 'twk-aeo-discovery' ) ); ?></th>
 							<td>
 								<textarea id="twkd_author_sameas" class="large-text code" rows="6" name="<?php echo esc_attr( TWKD_OPTION ); ?>[author_sameas]"><?php echo esc_textarea( twkd_get_option( 'author_sameas' ) ); ?></textarea>
 								<p class="description"><?php esc_html_e( 'One URL per line. The authority identifiers belong here — ORCID, ISNI, Wikidata, OpenLibrary — alongside LinkedIn and your profiles. These are what reconcile every post\'s author to your canonical entity.', 'twk-aeo-discovery' ); ?></p>
 							</td>
 						</tr>
 						<tr>
-							<th scope="row"><label for="twkd_author_knows"><?php esc_html_e( 'Author knowsAbout', 'twk-aeo-discovery' ); ?></label><?php echo $this->tip( __( 'Topics the author is known for, one per line or comma-separated. Examples: photography, machine learning, contract law, urban gardening. Three to ten entries is a reasonable range.', 'twk-aeo-discovery' ) ); ?></th>
+							<th scope="row"><label for="twkd_author_knows"><?php esc_html_e( 'Author knowsAbout', 'twk-aeo-discovery' ); ?></label><?php $this->tip( __( 'Topics the author is known for, one per line or comma-separated. Examples: photography, machine learning, contract law, urban gardening. Three to ten entries is a reasonable range.', 'twk-aeo-discovery' ) ); ?></th>
 							<td>
 								<textarea id="twkd_author_knows" class="large-text" rows="3" name="<?php echo esc_attr( TWKD_OPTION ); ?>[author_knowsabout]"><?php echo esc_textarea( twkd_get_option( 'author_knowsabout' ) ); ?></textarea>
 								<p class="description"><?php esc_html_e( 'Topics, one per line or comma-separated. Optional.', 'twk-aeo-discovery' ); ?></p>
@@ -654,7 +657,7 @@ class TWKD_Admin {
 					<p class="description"><?php esc_html_e( 'A small llms.txt file at the site root tells AI answer engines (ChatGPT, Claude, Perplexity, and similar) which pages on your site they should treat as authoritative. Auto-generate from the intro and key pages below, or supply the full content yourself.', 'twk-aeo-discovery' ); ?></p>
 					<table class="form-table" role="presentation">
 						<tr>
-							<th scope="row"><?php esc_html_e( 'llms.txt', 'twk-aeo-discovery' ); ?><?php echo $this->tip( __( 'Publish /llms.txt and /llms-full.txt on your site. Both are simple text files that AI engines look for to understand what your site is about.', 'twk-aeo-discovery' ) ); ?></th>
+							<th scope="row"><?php esc_html_e( 'llms.txt', 'twk-aeo-discovery' ); ?><?php $this->tip( __( 'Publish /llms.txt and /llms-full.txt on your site. Both are simple text files that AI engines look for to understand what your site is about.', 'twk-aeo-discovery' ) ); ?></th>
 							<td>
 								<label><input type="checkbox" name="<?php echo esc_attr( TWKD_OPTION ); ?>[enable_llms]" value="1" <?php checked( twkd_get_option( 'enable_llms' ) ); ?> /> <?php esc_html_e( 'Publish /llms.txt and /llms-full.txt', 'twk-aeo-discovery' ); ?></label>
 								<?php if ( twkd_get_option( 'enable_llms' ) ) : ?>
@@ -663,35 +666,35 @@ class TWKD_Admin {
 							</td>
 						</tr>
 						<tr>
-							<th scope="row"><?php esc_html_e( 'Content source', 'twk-aeo-discovery' ); ?><?php echo $this->tip( __( 'Auto: builds the file from the intro and key-pages list below. Custom: serves whatever you type into the Custom content field verbatim. Use Custom if you want full control over what AI engines see.', 'twk-aeo-discovery' ) ); ?></th>
+							<th scope="row"><?php esc_html_e( 'Content source', 'twk-aeo-discovery' ); ?><?php $this->tip( __( 'Auto: builds the file from the intro and key-pages list below. Custom: serves whatever you type into the Custom content field verbatim. Use Custom if you want full control over what AI engines see.', 'twk-aeo-discovery' ) ); ?></th>
 							<td>
 								<label style="display:block;margin-bottom:.4em;"><input type="radio" name="<?php echo esc_attr( TWKD_OPTION ); ?>[llms_mode]" value="auto" <?php checked( twkd_get_option( 'llms_mode' ), 'auto' ); ?> /> <?php esc_html_e( 'Auto-generate from site content (uses the intro and key pages below)', 'twk-aeo-discovery' ); ?></label>
 								<label style="display:block;"><input type="radio" name="<?php echo esc_attr( TWKD_OPTION ); ?>[llms_mode]" value="custom" <?php checked( twkd_get_option( 'llms_mode' ), 'custom' ); ?> /> <?php esc_html_e( 'Custom content (serve the text I write below, verbatim)', 'twk-aeo-discovery' ); ?></label>
 							</td>
 						</tr>
 						<tr>
-							<th scope="row"><label for="twkd_llms_custom"><?php esc_html_e( 'Custom content', 'twk-aeo-discovery' ); ?></label><?php echo $this->tip( __( 'The full llms.txt served verbatim when Content source is Custom. Plain text or Markdown. Example: a paragraph about your site, then a list of canonical URLs with one-line descriptions.', 'twk-aeo-discovery' ) ); ?></th>
+							<th scope="row"><label for="twkd_llms_custom"><?php esc_html_e( 'Custom content', 'twk-aeo-discovery' ); ?></label><?php $this->tip( __( 'The full llms.txt served verbatim when Content source is Custom. Plain text or Markdown. Example: a paragraph about your site, then a list of canonical URLs with one-line descriptions.', 'twk-aeo-discovery' ) ); ?></th>
 							<td>
 								<textarea id="twkd_llms_custom" class="large-text code" rows="16" name="<?php echo esc_attr( TWKD_OPTION ); ?>[llms_custom]"><?php echo esc_textarea( twkd_get_option( 'llms_custom' ) ); ?></textarea>
 								<p class="description"><?php esc_html_e( 'The full llms.txt, served verbatim when Content source is set to Custom. If you already had an llms.txt file, its contents were imported here on activation.', 'twk-aeo-discovery' ); ?></p>
 							</td>
 						</tr>
 						<tr>
-							<th scope="row"><label for="twkd_llms_intro"><?php esc_html_e( 'Auto intro', 'twk-aeo-discovery' ); ?></label><?php echo $this->tip( __( 'Used in Auto mode. A short factual paragraph about what the site covers. Example: A blog about urban gardening in temperate climates, with practical guides for small-space growers.', 'twk-aeo-discovery' ) ); ?></th>
+							<th scope="row"><label for="twkd_llms_intro"><?php esc_html_e( 'Auto intro', 'twk-aeo-discovery' ); ?></label><?php $this->tip( __( 'Used in Auto mode. A short factual paragraph about what the site covers. Example: A blog about urban gardening in temperate climates, with practical guides for small-space growers.', 'twk-aeo-discovery' ) ); ?></th>
 							<td>
 								<textarea id="twkd_llms_intro" class="large-text" rows="3" name="<?php echo esc_attr( TWKD_OPTION ); ?>[llms_intro]"><?php echo esc_textarea( twkd_get_option( 'llms_intro' ) ); ?></textarea>
 								<p class="description"><?php esc_html_e( 'Used in Auto-generate mode: a short, factual summary of who you are and what the site covers.', 'twk-aeo-discovery' ); ?></p>
 							</td>
 						</tr>
 						<tr>
-							<th scope="row"><label for="twkd_llms_key"><?php esc_html_e( 'Auto key pages', 'twk-aeo-discovery' ); ?></label><?php echo $this->tip( __( 'Used in Auto mode. One page per line, as "Title | https://url" or just a URL. Example: About | https://example.com/about/ — these are the pages AI engines should treat as the authoritative source for your site.', 'twk-aeo-discovery' ) ); ?></th>
+							<th scope="row"><label for="twkd_llms_key"><?php esc_html_e( 'Auto key pages', 'twk-aeo-discovery' ); ?></label><?php $this->tip( __( 'Used in Auto mode. One page per line, as "Title | https://url" or just a URL. Example: About | https://example.com/about/ — these are the pages AI engines should treat as the authoritative source for your site.', 'twk-aeo-discovery' ) ); ?></th>
 							<td>
 								<textarea id="twkd_llms_key" class="large-text code" rows="4" name="<?php echo esc_attr( TWKD_OPTION ); ?>[llms_key_pages]"><?php echo esc_textarea( twkd_get_option( 'llms_key_pages' ) ); ?></textarea>
 								<p class="description"><?php esc_html_e( 'Used in Auto-generate mode. One per line, as "Title | https://url" or a bare URL.', 'twk-aeo-discovery' ); ?></p>
 							</td>
 						</tr>
 						<tr>
-							<th scope="row"><?php esc_html_e( 'AI crawlers', 'twk-aeo-discovery' ); ?><?php echo $this->tip( __( 'Adds a friendly note to robots.txt indicating AI crawlers (GPTBot, ClaudeBot, PerplexityBot, etc.) are welcome. Does not block anything; just signals openness for citation.', 'twk-aeo-discovery' ) ); ?></th>
+							<th scope="row"><?php esc_html_e( 'AI crawlers', 'twk-aeo-discovery' ); ?><?php $this->tip( __( 'Adds a friendly note to robots.txt indicating AI crawlers (GPTBot, ClaudeBot, PerplexityBot, etc.) are welcome. Does not block anything; just signals openness for citation.', 'twk-aeo-discovery' ) ); ?></th>
 							<td><label><input type="checkbox" name="<?php echo esc_attr( TWKD_OPTION ); ?>[ai_welcome]" value="1" <?php checked( twkd_get_option( 'ai_welcome' ) ); ?> /> <?php esc_html_e( 'Add a note welcoming AI crawlers to robots.txt (does not block anything)', 'twk-aeo-discovery' ); ?></label></td>
 						</tr>
 					</table>
@@ -846,12 +849,16 @@ class TWKD_Admin {
 
 		$redirect = admin_url( 'options-general.php?page=twk-aeo-discovery' );
 
-		if ( empty( $_FILES['twkd_import_file']['tmp_name'] ) || ! is_uploaded_file( $_FILES['twkd_import_file']['tmp_name'] ) ) {
+		// $_FILES['twkd_import_file']['tmp_name'] is a server-generated temp filename,
+		// not user-controlled input. Standard pattern documented at:
+		// https://github.com/WordPress/WordPress-Coding-Standards/issues/1408
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		if ( empty( $_FILES['twkd_import_file']['tmp_name'] ) || ! is_uploaded_file( $_FILES['twkd_import_file']['tmp_name'] ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			wp_safe_redirect( add_query_arg( 'twkd_import', 'nofile', $redirect ) );
 			exit;
 		}
 
-		$raw  = file_get_contents( $_FILES['twkd_import_file']['tmp_name'] ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- reading an uploaded temp file.
+		$raw  = file_get_contents( $_FILES['twkd_import_file']['tmp_name'] ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- reading an uploaded temp file.
 		$data = json_decode( (string) $raw, true );
 
 		if ( ! is_array( $data ) || empty( $data['settings'] ) || ! is_array( $data['settings'] ) ) {
