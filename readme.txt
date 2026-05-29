@@ -71,10 +71,15 @@ Yes. The Tools tab has Export and Import buttons that save and load a JSON file 
 
 == Screenshots ==
 
-1. Settings page — Sitemap tab: choose which post types and taxonomies appear in the sitemap, and how robots.txt is handled.
-2. Settings page — Entity Authority tab: enrich Slim SEO's Organization and Person schema with logo, sameAs, jobTitle, bio, knowsAbout, and canonical @ids.
-3. Settings page — AI Engines tab: publish llms.txt in Auto or Custom mode, plus the welcome note for AI crawlers in robots.txt.
-4. Settings page — Tools tab: write or remove the physical llms.txt, submit URLs to IndexNow manually, and export or import settings between sites.
+1. The post-wizard setup report — at-a-glance summary, graph health validation, action items, and per-identifier setup walkthroughs all in one view.
+2. The branching setup wizard starts by asking what your site represents — a person, an organization, or both.
+3. Every wizard field has an inline help description explaining what it is and why it matters for AEO.
+4. Per-identifier setup walkthroughs tell you how to acquire each pending identifier — full step-by-step instructions, not just a list.
+5. The Entity Authority settings tab — detected SEO plugin banner, run-wizard button, enrichment toggles, and all the entity fields ready to edit anytime.
+6. The current entity graph view — copyable JSON-LD output and direct links to Google Rich Results Test and the Schema.org validator.
+7. The wizard's organization identifiers step — LinkedIn, Wikidata, Crunchbase, X, Facebook, YouTube. Blank fields are surfaced as pending in the report.
+8. The wizard's author identifiers step — ORCID, ISNI, Wikidata, Google Scholar, LinkedIn, Muck Rack, Amazon Author, Goodreads, Open Library.
+9. The Diagnostics tab — plugin health, sitemap status, and the plugin's own error log. Empty log is the healthy state.
 
 == The settings screen ==
 
